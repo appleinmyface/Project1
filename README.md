@@ -22,8 +22,11 @@ Search History: Click on any city name in the search history to view the weather
 During the development of the Weather Dashboard, several challenges were faced:
 
 API Integration: Initially, there was confusion about how to properly integrate and use the OpenWeather API, especially distinguishing between the geocoding API and the weather/forecast APIs.
+
 Error Handling: Handling errors gracefully was challenging. Ensuring that users received meaningful error messages when cities were not found or when there were issues with API requests required careful coding and testing.
+
 Data Synchronization: Synchronizing the current weather data with the forecast data and ensuring they matched accurately involved understanding the data structure returned by the APIs.
+
 LocalStorage Management: Implementing a reliable search history feature using localStorage required ensuring data consistency and managing the display updates efficiently.
 
 ## Technologies Used
