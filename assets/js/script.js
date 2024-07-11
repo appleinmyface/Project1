@@ -1,5 +1,4 @@
-const apiKey = `https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}`; // OpenWeather API key
-const geoApi = `http:api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}` //Geocode API Key
+const weatherApiKey = '527500044061a7b54b4b393e518ead43'; // OpenWeather API key
 
 // Event listener for the search button
 document.getElementById('search-button').addEventListener('click', () => {
@@ -11,24 +10,38 @@ document.getElementById('search-button').addEventListener('click', () => {
 
 // Event listener for the search history list
 document.getElementById('search-history').addEventListener('click', (e) => {
-  if (e.target.tagName === 'li') {
+  if (e.target.tagName === 'LI') {
     getWeatherData(e.target.textContent);
   }
 });
 
 // Function to fetch and display the current weather data for a city
 function getWeatherData(city) {
-  fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`)
+  const geocodeUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${weatherApiKey}`;
+  
+  fetch(geocodeUrl)
     .then(response => {
       if (!response.ok) {
-        throw new Error('City not found');
+        throw new Error('City not found in geocode');
       }
       return response.json();
     })
     .then(data => {
-      // Destructure the necessary data from the API response
+      if (data.length === 0) {
+        throw new Error('City not found in geocode');
+      }
+      const { lat, lon } = data[0];
+      return fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${weatherApiKey}&units=imperial`);
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('City not found in weather data');
+      }
+      return response.json();
+    })
+    .then(data => {
       const { name, main, wind, weather } = data;
-      
+
       // Update the HTML elements with the weather data
       document.getElementById('city-name').textContent = name;
       document.getElementById('current-date').textContent = new Date().toLocaleDateString();
@@ -39,7 +52,7 @@ function getWeatherData(city) {
 
       // Fetch and display the 5-day forecast for the city
       getForecastData(data.coord.lat, data.coord.lon);
-      
+
       // Save the city to the search history
       saveToSearchHistory(city);
     })
@@ -51,15 +64,18 @@ function getWeatherData(city) {
 
 // Function to fetch and display the 5-day weather forecast for a city
 function getForecastData(lat, lon) {
-  fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`)
-    .then(response => response.json())
+  fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${weatherApiKey}&units=imperial`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error fetching forecast data');
+      }
+      return response.json();
+    })
     .then(data => {
-      // Filter the forecast data to get the weather at 12:00 PM each day
       const forecast = data.list.filter(item => item.dt_txt.includes('12:00:00'));
       const forecastCards = document.getElementById('forecast-cards');
       forecastCards.innerHTML = '';
 
-      // Create and append forecast cards for each day
       forecast.forEach(day => {
         const card = document.createElement('div');
         card.classList.add('forecast-card');
@@ -92,7 +108,6 @@ function displaySearchHistory() {
   const searchHistoryEl = document.getElementById('search-history');
   searchHistoryEl.innerHTML = '';
 
-  // Create and append list items for each city in the search history
   searchHistory.forEach(city => {
     const li = document.createElement('li');
     li.textContent = city;
