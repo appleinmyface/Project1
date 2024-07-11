@@ -17,7 +17,7 @@ document.getElementById('search-history').addEventListener('click', (e) => {
 
 // Function to fetch and display the current weather data for a city
 function getWeatherData(city) {
-  const geocodeUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${weatherApiKey}`;
+  const geocodeUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${weatherApiKey}`;
   
   fetch(geocodeUrl)
     .then(response => {
