@@ -1,4 +1,5 @@
-const apiKey = `api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}`; // Replace with your OpenWeather API key
+const apiKey = `https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}`; // OpenWeather API key
+const geoApi = `http:api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}` //Geocode API Key
 
 // Event listener for the search button
 document.getElementById('search-button').addEventListener('click', () => {
@@ -10,7 +11,7 @@ document.getElementById('search-button').addEventListener('click', () => {
 
 // Event listener for the search history list
 document.getElementById('search-history').addEventListener('click', (e) => {
-  if (e.target.tagName === 'LI') {
+  if (e.target.tagName === 'li') {
     getWeatherData(e.target.textContent);
   }
 });
